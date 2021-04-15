@@ -32,8 +32,8 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"/>
-        <h1 className="App-title">Bienvenue sur le Blindtest</h1>
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1 className="App-title">Blindtest React</h1>
       </header>
       <div className="App-images">
         <p>Il va falloir modifier le code pour faire un vrai Blindtest !</p>
