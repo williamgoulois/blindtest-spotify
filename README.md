@@ -1,31 +1,21 @@
 # blindtest-spotify
 
-This is a simple demo of how to create a blindtest using Spotify and React.
+This is a simple demo of how to create a blindtest using Spotify and React Hooks with Typescript.
 
 ## Getting started
 
-First, fork / clone the repository.
+Install the dependencies.
 
 ```bash
-git clone git@github.com:williamgoulois/blindtest-spotify.git
-cd blindtest-spotify
+yarn
 ```
 
-Then, install the dependencies.
+Rename the `.env.example` in `.env.local`
+
+[Generate your Spotify Token](https://developer.spotify.com/console/get-current-user-saved-tracks/?market=&limit=&offset=) and fill it in you `.env.local`
+
+Start the app and play some blindtest !
 
 ```bash
-npm install # or alternatively: yarn install
-```
-
-To launch the app in development mode:
-
-```bash
-npm start
-```
-
-To deploy the app to Github pages, modify the `homepage` key in `package.json` to match your account and project.
-Then, launch the command:
-
-```bash
-npm run deploy
+yarn start
 ```
