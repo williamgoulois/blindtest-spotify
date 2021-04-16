@@ -67,7 +67,7 @@ export type TrackWithIndex = {
 }
 
 const App = () => {
-  const [tracks, setTracks] = useState<Item[]>()
+  const [tracks, setTracks] = useState<Item[]>([])
   const [currentTrack, setCurrentTrack] = useState({ track: EmptyTrack, index: -1 })
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const App = () => {
     }
     const randomIndex = getRandomNumber(tracks.length, [currentTrack.index])
     setCurrentTrack({
-      track: tracks?.[randomIndex]?.track ?? EmptyTrack,
+      track: tracks[randomIndex]?.track ?? EmptyTrack,
       index: randomIndex,
     })
   }, [tracks, currentTrack])
@@ -132,6 +132,7 @@ const App = () => {
 
   const secondTrackIndex = getRandomNumber(tracks.length, [currentTrack.index])
   const thirdTrackIndex = getRandomNumber(tracks.length, [currentTrack.index, secondTrackIndex])
+
   const firstTrack = currentTrack.track
   const secondTrack = tracks[secondTrackIndex]?.track
   const thirdTrack = tracks[thirdTrackIndex]?.track
@@ -144,7 +145,9 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        {tracks && <h1 className="App-title">{`Bonjour, il y a ${tracks?.length} musiques`}</h1>}
+        {tracks.length > 0 && (
+          <h1 className="App-title">{`Bonjour, il y a ${tracks.length} musiques`}</h1>
+        )}
       </header>
       <div className="App-images">
         <AlbumCover style={{ height: 400, width: 400 }} track={currentTrack.track ?? EmptyTrack} />
