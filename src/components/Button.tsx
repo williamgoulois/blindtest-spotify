@@ -1,7 +1,8 @@
 import "./Button.css"
+import * as React from "react"
 
 type ButtonProps = {
-  onClick: () => void
+  onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
   children: React.ReactNode
 }
 
