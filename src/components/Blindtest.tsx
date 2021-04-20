@@ -2,7 +2,7 @@ import swal from "sweetalert"
 import * as React from "react"
 import loading from "loading.svg"
 import { Button } from "components/Button"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useReducer } from "react"
 import { AlbumCover } from "components/AlbumCover"
 
 import SoundPreview from "components/SoundPreview"
@@ -34,6 +34,38 @@ type AlbumImage = {
   url: string
 }
 
+const INIT = "INIT"
+const NEW_TRACK = "NEW_TRACK"
+
+type ReducerState = {
+  tracks: Item[] | undefined
+  currentIndex: number | undefined
+}
+
+type ReducerAction = { type: typeof INIT; payload: Item[] } | { type: typeof NEW_TRACK }
+
+function reducer(state: ReducerState, action: ReducerAction): ReducerState {
+  switch (action.type) {
+    case INIT:
+      return { tracks: action.payload, currentIndex: getRandomNumber(action.payload.length) }
+    case NEW_TRACK:
+      if (state.tracks === undefined) {
+        return state
+      }
+      return state.currentIndex !== undefined
+        ? {
+            tracks: state.tracks,
+            currentIndex: getRandomNumber(state.tracks.length, [state.currentIndex]),
+          }
+        : {
+            tracks: state.tracks,
+            currentIndex: getRandomNumber(state.tracks.length),
+          }
+    default:
+      return state
+  }
+}
+
 export const Blindtest = () => {
   const options = useMemo(
     () => ({
@@ -49,46 +81,32 @@ export const Blindtest = () => {
     options,
   )
 
-  const [tracks, setTracks] = useState<Item[] | undefined>(undefined)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | undefined>(undefined)
-
-  const getNewTrack = useCallback(() => {
-    if (tracks === undefined) {
-      return
-    }
-    currentTrackIndex !== undefined
-      ? setCurrentTrackIndex(getRandomNumber(tracks.length, [currentTrackIndex]))
-      : setCurrentTrackIndex(getRandomNumber(tracks.length))
-  }, [tracks, currentTrackIndex])
+  const [state, dispatch] = useReducer(reducer, { tracks: undefined, currentIndex: undefined })
 
   useEffect(() => {
     if (data !== undefined) {
-      setTracks(data.items)
+      dispatch({ type: INIT, payload: data.items })
     }
   }, [data])
 
-  useEffect(() => {
-    if (tracks !== undefined) setCurrentTrackIndex(getRandomNumber(tracks.length))
-  }, [tracks])
-
   const checkAnswer = useCallback(
     (id: string) => {
-      if (tracks === undefined || currentTrackIndex === undefined) {
+      if (state.tracks === undefined || state.currentIndex === undefined) {
         return
       }
-      if (id === tracks[currentTrackIndex].track.id) {
-        swal("Bravo", "Tu as gagné", "success").then(() => getNewTrack())
+      if (id === state.tracks[state.currentIndex].track.id) {
+        swal("Bravo", "Tu as gagné", "success").then(() => dispatch({ type: NEW_TRACK }))
       } else {
         swal("Raté", "Ce n'est pas la bonne réponse", "error")
       }
     },
-    [tracks, currentTrackIndex, getNewTrack],
+    [state.tracks, state.currentIndex],
   )
 
   useEffect(() => {
-    const timeout = setTimeout(() => getNewTrack(), 30000)
+    const timeout = setTimeout(() => dispatch({ type: NEW_TRACK }), 30000)
     return () => clearTimeout(timeout)
-  }, [currentTrackIndex, getNewTrack])
+  }, [state.currentIndex])
 
   if (error !== undefined) {
     return <div>{error.message}</div>
@@ -100,25 +118,28 @@ export const Blindtest = () => {
       </div>
     )
   }
-  if (tracks !== undefined && currentTrackIndex !== undefined) {
-    const secondTrackIndex = getRandomNumber(tracks.length, [currentTrackIndex])
-    const thirdTrackIndex = getRandomNumber(tracks.length, [currentTrackIndex, secondTrackIndex])
+  if (state.tracks !== undefined && state.currentIndex !== undefined) {
+    const secondTrackIndex = getRandomNumber(state.tracks.length, [state.currentIndex])
+    const thirdTrackIndex = getRandomNumber(state.tracks.length, [
+      state.currentIndex,
+      secondTrackIndex,
+    ])
 
-    const firstTrack = tracks[currentTrackIndex].track
-    const secondTrack = tracks[secondTrackIndex].track
-    const thirdTrack = tracks[thirdTrackIndex].track
+    const firstTrack = state.tracks[state.currentIndex].track
+    const secondTrack = state.tracks[secondTrackIndex].track
+    const thirdTrack = state.tracks[thirdTrackIndex].track
 
     const propositions = shuffleArray([firstTrack, secondTrack, thirdTrack])
     return (
       <>
         <>
-          <h1 className="App-title">{`Bonjour, il y a ${tracks.length} musiques`}</h1>
+          <h1 className="App-title">{`Bonjour, il y a ${state.tracks.length} musiques`}</h1>
           <div className="App-images">
             <AlbumCover
               style={{ height: 400, width: 400 }}
-              track={tracks[currentTrackIndex].track}
+              track={state.tracks[state.currentIndex].track}
             />
-            <SoundPreview previewUrl={tracks[currentTrackIndex].track.preview_url} />
+            <SoundPreview previewUrl={state.tracks[state.currentIndex].track.preview_url} />
           </div>
           <div className="App-buttons">
             {propositions.map((track) => {
