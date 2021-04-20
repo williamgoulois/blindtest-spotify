@@ -6,6 +6,6 @@ type ButtonProps = {
   children: React.ReactNode
 }
 
-const Button = ({ onClick, children }: ButtonProps) => <button onClick={onClick}>{children}</button>
-
-export default Button
+export const Button = ({ onClick, children }: ButtonProps) => (
+  <button onClick={onClick}>{children}</button>
+)
