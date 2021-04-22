@@ -12,9 +12,9 @@ Install the dependencies.
 yarn
 ```
 
-Rename the `.env.example` in `.env.local`
+Copy the `.env.example` in `.env.local`
 
-[Generate your Spotify Token](https://developer.spotify.com/console/get-current-user-saved-tracks/?market=&limit=&offset=) and fill it in you `.env.local`
+[Generate your Spotify Token](https://developer.spotify.com/console/get-current-user-saved-tracks/?market=&limit=&offset=) (only user-library-read scope needed) and fill it in you `.env.local`
 
 Start the app and play some blindtest !
 
