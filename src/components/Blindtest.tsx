@@ -94,7 +94,7 @@ export const Blindtest = () => {
       if (state.tracks === undefined || state.currentIndex === undefined) {
         return
       }
-      if (id === state.tracks[state.currentIndex].track.id) {
+      if (id === state.tracks[state.currentIndex]?.track.id) {
         swal("Bravo", "Tu as gagné", "success").then(() => dispatch({ type: NEW_TRACK }))
       } else {
         swal("Raté", "Ce n'est pas la bonne réponse", "error")
@@ -125,35 +125,38 @@ export const Blindtest = () => {
       secondTrackIndex,
     ])
 
-    const firstTrack = state.tracks[state.currentIndex].track
-    const secondTrack = state.tracks[secondTrackIndex].track
-    const thirdTrack = state.tracks[thirdTrackIndex].track
+    if (secondTrackIndex !== undefined && thirdTrackIndex !== undefined) {
+      const firstTrack = state.tracks[state.currentIndex]?.track
+      const secondTrack = state.tracks[secondTrackIndex]?.track
+      const thirdTrack = state.tracks[thirdTrackIndex]?.track
 
-    const propositions = shuffleArray([firstTrack, secondTrack, thirdTrack])
-    return (
-      <>
-        <>
-          <h1 className="App-title">{`Bonjour, il y a ${state.tracks.length} musiques`}</h1>
-          <div className="App-images">
-            <AlbumCover
-              style={{ height: 400, width: 400 }}
-              track={state.tracks[state.currentIndex].track}
-            />
-            <SoundPreview previewUrl={state.tracks[state.currentIndex].track.preview_url} />
-          </div>
-          <div className="App-buttons">
-            {propositions.map((track) => {
-              return (
-                <Button key={track.id} onClick={() => checkAnswer(track.id)}>
-                  {track.name}
-                </Button>
-              )
-            })}
-          </div>
-        </>
-      </>
-    )
-  } else {
-    return null
+      const propositions = shuffleArray([firstTrack, secondTrack, thirdTrack])
+
+      if (firstTrack !== undefined && secondTrack !== undefined && thirdTrack !== undefined) {
+        return (
+          <>
+            <>
+              <h1 className="App-title">{`Bonjour, il y a ${state.tracks.length} musiques`}</h1>
+              <div className="App-images">
+                <AlbumCover style={{ height: 400, width: 400 }} track={firstTrack} />
+                <SoundPreview previewUrl={firstTrack.preview_url} />
+              </div>
+              <div className="App-buttons">
+                {propositions.map((track) => {
+                  if (track !== undefined) {
+                    return (
+                      <Button key={track.id} onClick={() => checkAnswer(track.id)}>
+                        {track.name}
+                      </Button>
+                    )
+                  }
+                })}
+              </div>
+            </>
+          </>
+        )
+      }
+    }
   }
+  return null
 }
